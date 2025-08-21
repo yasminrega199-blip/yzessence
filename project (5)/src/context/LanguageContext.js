@@ -1,0 +1,302 @@
+import React, { createContext, useState, useContext, useEffect } from 'react';
+
+// Diccionario de traducciones
+const translations = {
+  es: {
+    home: {
+      heroTitle: "Descubre tu Belleza Radiante",
+      heroSubtitle: "En YZEssence, te ofrecemos una selección exclusiva de productos de belleza y cuidado personal para realzar tu encanto natural.", // Actualizado
+      exploreProducts: "Explorar Productos",
+      categoriesTitle: "Nuestras Categorías Destacadas",
+      makeup: "Maquillaje",
+      makeupDesc: "Desde bases impecables hasta labiales vibrantes, encuentra todo para un look perfecto.",
+      skinCare: "Cuidado de la Piel",
+      skinCareDesc: "Nutre y protege tu piel con nuestra gama de cremas, sueros y tratamientos.",
+      fragrances: "Fragancias",
+      fragrancesDesc: "Encuentra tu aroma distintivo entre nuestra colección de perfumes y colonias.",
+      viewProducts: "Ver Productos",
+      whyChooseUs: "¿Por Qué Elegir YZEssence?", // Actualizado
+      qualityTitle: "Calidad Superior",
+      qualityDesc: "Seleccionamos cuidadosamente cada producto para garantizar la máxima calidad y eficacia.",
+      innovationTitle: "Innovación Constante",
+      innovationDesc: "Siempre a la vanguardia con las últimas tendencias y avances en belleza.",
+      attentionTitle: "Atención Personalizada",
+      attentionDesc: "Tu satisfacción es nuestra prioridad. Te acompañamos en cada paso de tu compra.",
+      ctaTitle: "¡No esperes más para lucir espectacular!",
+      ctaSubtitle: "Explora nuestra colección y encuentra los productos perfectos para ti.",
+      shopNow: "Comprar Ahora",
+      hairCare: "Cuidado del Cabello",
+      bodyCare: "Cuidado Corporal",
+      homeProducts: "Productos para el Hogar",
+    },
+    header: {
+      home: "Inicio",
+      products: "Productos",
+      contact: "Contacto",
+      policies: "Políticas",
+      search: "Buscar",
+      viewCart: "Ver carrito",
+      openMenu: "Abrir menú",
+      closeMenu: "Cerrar menú",
+      allProducts: "Todos los Productos",
+      hotSales: "Ofertas Calientes",
+    },
+    productsPage: {
+      title: "Nuestros Productos",
+      searchPlaceholder: "Buscar productos...",
+      filterBy: "Filtrar por",
+      all: "Todos",
+      noProductsFound: "No se encontraron productos que coincidan con tu búsqueda o filtro.",
+      addToCart: "Agregar al Carrito",
+      cashOnDelivery: "Pedir por WhatsApp",
+      whatsappProductMessage: "¡Hola! Me gustaría ordenar el producto *{productName}* por Pago Contra Entrega. Su precio es de ${productPrice}. ¿Podrían ayudarme con esto?",
+    },
+    productDetail: {
+      backToProducts: "Volver a Productos",
+      addToCart: "Agregar al Carrito",
+      addedToCart: "unidad(es) de {productName} añadida(s) al carrito.",
+      loading: "Cargando producto o producto no encontrado...",
+      reviews: "reseñas",
+      benefitsTitle: "Beneficios Clave",
+      usageTitle: "Modo de Uso",
+      videoDemoTitle: "Video de Demostración",
+      testimonialsTitle: "Lo que dicen nuestros clientes",
+      cashOnDelivery: "Pedir por WhatsApp",
+      whatsappProductMessage: "¡Hola! Me gustaría ordenar *{quantity}* unidad(es) de *{productName}* por Pago Contra Entrega. El total sería de ${productPrice}. ¿Podrían ayudarme con esto?",
+    },
+    cartModal: {
+      yourCart: "Tu Carrito",
+      emptyCart: "Tu carrito está vacío.",
+      emptyCartMessage: "¡Añade algunos productos para empezar a comprar!",
+      quantity: "Cantidad",
+      total: "Total",
+      proceedToCheckout: "Proceder al Pago",
+      cashOnDelivery: "Pago Contra Entrega",
+    },
+    checkoutPage: {
+      title: "Finalizar Compra",
+      shippingInfo: "Información de Envío",
+      firstName: "Nombre",
+      lastName: "Apellido",
+      email: "Email",
+      phone: "Teléfono",
+      address: "Dirección",
+      apartment: "Apartamento, suite, etc. (opcional)",
+      city: "Ciudad",
+      state: "Estado",
+      zipCode: "Código Postal",
+      country: "País",
+      paymentMethod: "Método de Pago",
+      cod: "Pago Contra Entrega (COD)",
+      paypal: "Pagar con PayPal",
+      paypalSimulated: "¡Atención! Esta es una integración simulada de PayPal. En un entorno real, aquí se renderizaría el botón oficial de PayPal.",
+      paypalSimulatedButton: "Pagar con PayPal (Simulado)",
+      orderConfirmation: "Confirmación del Pedido",
+      shippingAddress: "Dirección de Envío",
+      orderSummary: "Resumen del Pedido",
+      subtotal: "Subtotal",
+      shipping: "Envío",
+      free: "Gratis",
+      total: "Total",
+      previous: "Anterior",
+      next: "Siguiente",
+      placeOrder: "Realizar Pedido",
+      processing: "Procesando...",
+      orderSuccessTitle: "¡Pedido Realizado con Éxito!",
+      orderSuccessMessage: "Gracias por tu compra en YZEssence. Tu pedido ha sido procesado y recibirás una confirmación por correo electrónico en breve.", // Actualizado
+      backToHome: "Volver al Inicio",
+      cartEmptyTitle: "Tu Carrito Está Vacío",
+      cartEmptyMessage: "Parece que no tienes productos en tu carrito. ¡Añade algunos para proceder con la compra!",
+      goToShop: "Ir a la Tienda",
+      firstNameRequired: "El nombre es requerido",
+      lastNameRequired: "El apellido es requerido",
+      emailRequired: "El email es requerido",
+      invalidEmail: "Email inválido",
+      phoneRequired: "El teléfono es requerido",
+      addressRequired: "La dirección es requerida",
+      cityRequired: "La ciudad es requerida",
+      stateRequired: "El estado es requerido",
+      zipCodeRequired: "El código postal es requerido",
+    },
+    contactPage: {
+      title: "Contáctanos",
+      subtitle: "Tienes alguna pregunta o comentario? Estamos aquí para ayudarte. Completa el formulario a continuación y nos pondremos en contacto contigo lo antes posible.",
+      contactInfo: "Información de Contacto",
+      address: "Dirección",
+      phone: "Teléfono",
+      email: "Email",
+      followUs: "Síguenos",
+      sendMessage: "Envíanos un Mensaje",
+      messageSentSuccess: "¡Mensaje enviado con éxito! Te contactaremos pronto.",
+      fullName: "Nombre Completo",
+      subject: "Asunto",
+      message: "Mensaje",
+      sendMessageButton: "Enviar Mensaje",
+      sending: "Enviando...",
+      nameRequired: "El nombre es requerido",
+      emailRequired: "El email es requerido",
+      invalidEmail: "Email inválido",
+      subjectRequired: "El asunto es requerido",
+      messageRequired: "El mensaje es requerido",
+    },
+    privacyPolicyPage: {
+      title: "Política de Privacidad",
+      lastUpdated: "Última actualización",
+      intro: "En YZEssence, nos comprometemos a proteger tu privacidad. Esta Política de Privacidad describe cómo recopilamos, usamos y compartimos tu información personal cuando visitas o realizas una compra en nuestro sitio web.", // Actualizado
+      infoCollectionTitle: "Información que Recopilamos",
+      personalInfo: "Información Personal",
+      personalInfoDesc: "Recopilamos información personal que nos proporcionas directamente, como tu nombre, dirección de correo electrónico, dirección de envío, número de teléfono y detalles de pago cuando realizas una compra o te registras en nuestro sitio.",
+      usageInfo: "Información de Uso",
+      usageInfoDesc: "Recopilamos automáticamente cierta información sobre tu dispositivo, incluyendo información sobre tu navegador web, dirección IP, zona horaria y algunas de las cookies que están instaladas en tu dispositivo. Además, a medida que navegas por el sitio, recopilamos información sobre las páginas web o productos individuales que ves, qué sitios web o términos de búsqueda te remitieron al sitio e información sobre cómo interactúas con el sitio.",
+      howWeUseInfoTitle: "Cómo Usamos tu Información",
+      fulfillOrders: "Para cumplir con los pedidos:",
+      fulfillOrdersDesc: "Utilizamos la información de tu pedido para procesar tus pagos, organizar el envío y proporcionarte facturas y/o confirmaciones de pedido.",
+      communicate: "Para comunicarnos contigo:",
+      communicateDesc: "Podemos utilizar tu información para responder a tus consultas, enviarte actualizaciones sobre tu pedido o informarte sobre promociones y nuevos productos (si has optado por recibirlos).",
+      improveSite: "Para mejorar nuestro sitio:",
+      improveSiteDesc: "Utilizamos la información de uso para ayudarnos a detectar posibles riesgos y fraudes, y para mejorar y optimizar nuestro sitio (por ejemplo, generando análisis sobre cómo nuestros clientes navegan e interactúan con el sitio, y para evaluar el éxito de nuestras campañas de marketing y publicidad).",
+      sharingInfoTitle: "Compartiendo tu Información Personal",
+      thirdParties: "Compartimos tu información personal con terceros para ayudarnos a usar tu información personal, como se describe anteriormente. Por ejemplo, utilizamos Shopify para potenciar nuestra tienda en línea. También utilizamos Google Analytics para ayudarnos a comprender cómo nuestros clientes usan el sitio. Finalmente, también podemos compartir tu información personal para cumplir con las leyes y regulaciones aplicables, para responder a una citación, orden de búsqueda u otra solicitud legal de información que recibamos, o para proteger nuestros derechos.",
+      yourRightsTitle: "Tus Derechos",
+      gdpr: "Si eres residente europeo, tienes derecho a acceder a la información personal que tenemos sobre ti y a solicitar que tu información personal sea corregida, actualizada o eliminada. Si deseas ejercer este derecho, contáctanos a través de la información de contacto a continuación.",
+      dataRetention: "Retención de Datos",
+      dataRetentionDesc: "Cuando realizas un pedido a través del sitio, mantendremos la información de tu pedido para nuestros registros a menos y hasta que nos pidas que eliminemos esta información.",
+      changesPolicyTitle: "Cambios en esta Política de Privacidad",
+      changesPolicyDesc: "Podemos actualizar esta política de privacidad de vez en cuando para reflejar, por ejemplo, cambios en nuestras prácticas o por otras razones operativas, legales o reglamentarias.",
+      contactUsTitle: "Contáctanos",
+      contactUsDesc: "Para obtener más información sobre nuestras prácticas de privacidad, si tienes preguntas o si deseas presentar una queja, contáctanos por correo electrónico a info@yzfarmasis.com o por correo postal a la dirección proporcionada en nuestra página de contacto.",
+    },
+    returnPolicyPage: {
+      title: "Política de Devoluciones",
+      lastUpdated: "Última actualización",
+      intro: "En YZEssence, nos esforzamos por garantizar tu satisfacción con cada compra. Entendemos que a veces un producto puede no ser exactamente lo que esperabas, por lo que hemos establecido una política de devoluciones clara y justa para asegurarnos de que tengas una experiencia de compra positiva.", // Actualizado
+      conditionsTitle: "Condiciones para Devoluciones",
+      notReturnable: "Varios tipos de productos no son retornables:",
+      brokenSeals: "Productos con sellos de seguridad rotos o dañados",
+      perishable: "Productos perecederos como alimentos, flores o plantas",
+      intimate: "Productos íntimos o sanitarios",
+      customized: "Productos personalizados",
+      giftCards: "Tarjetas de regalo",
+      saleItems: "Productos en oferta o liquidación",
+      proofOfPurchase: "Para completar tu devolución, requerimos un recibo o comprobante de compra.",
+      noManufacturerReturn: "Por favor, no envíes tu compra de vuelta al fabricante.",
+      processTitle: "Proceso de Devolución",
+      step1Title: "1. Solicitud de Devolución",
+      contactUsVia: "Para iniciar una devolución, por favor contacta a nuestro servicio al cliente a través de:",
+      emailContact: "Email: devoluciones@yzfarmasis.com",
+      phoneContact: "Teléfono: +52 55 1234 5678",
+      contactForm: "Formulario de contacto en nuestra página web",
+      provideInfo: "Deberás proporcionar la siguiente información:",
+      orderNumber: "Número de pedido",
+      productDetails: "Detalles del producto que deseas devolver",
+      returnReason: "Motivo de la devolución",
+      refundPreference: "Preferencia de reembolso o cambio",
+      step2Title: "2. Empaque y Envío",
+      shippingInstructions: "Una vez aprobada tu solicitud de devolución, recibirás instrucciones sobre cómo y dónde enviar tu producto. Todos los artículos deben ser devueltos en su embalaje original con todas las etiquetas intactas.",
+      step3Title: "3. Inspección",
+      inspectionDetails: "Una vez recibido tu artículo, inspeccionaremos el producto para verificar su estado. Te notificaremos una vez que hayamos recibido e inspeccionado tu devolución.",
+      refundsTitle: "Reembolsos",
+      refundProcess: "Si tu devolución es aprobada, procesaremos inmediatamente el reembolso a tu método de pago original. Dependiendo de la política de tu compañía de tarjeta de crédito, el reembolso puede tardar entre 5-10 días hábiles en reflejarse en tu cuenta.",
+      partialRefunds: "Reembolsos Parciales",
+      partialRefundConditions: "En algunos casos, se pueden otorgar reembolsos parciales:",
+      usedProducts: "Productos con signos obvios de uso",
+      damagedMissing: "Productos que no están en su condición original, dañados o con partes faltantes",
+      lateReturns: "Productos devueltos más de 30 días después de la entrega",
+      shippingReturnsTitle: "Envíos para Devoluciones",
+      shippingCostsResponsibility: "Serás responsable de pagar tus propios costos de envío para devolver tu artículo. Los costos de envío no son reembolsables.",
+      shippingDeduction: "Si recibes un reembolso, el costo del envío de devolución se deducirá de tu reembolso.",
+      shippingTimeVaries: "Dependiendo de dónde vivas, el tiempo que puede tardar tu producto intercambiado en llegar a ti puede variar.",
+      faqTitle: "Preguntas Frecuentes",
+      faqQ1: "¿Cuánto tiempo tengo para devolver un producto?",
+      faqA1: "Aceptamos devoluciones dentro de los 30 días posteriores a la recepción del producto.",
+      faqQ2: "¿Puedo cambiar un producto por otro?",
+      faqA2: "Sí, ofrecemos cambios por el mismo producto en caso de defectos o por otro producto de valor igual o superior (pagando la diferencia si aplica).",
+      faqQ3: "¿Qué hago si recibí un producto dañado o incorrecto?",
+      faqA3: "Si recibes un producto dañado o incorrecto, por favor contacta a nuestro servicio al cliente inmediatamente. En estos casos, cubriremos los gastos de envío para la devolución y te enviaremos un reemplazo sin costo adicional.",
+      contactUsFooter: "Contáctanos",
+      contactUsPolicy: "Si tienes alguna pregunta sobre nuestra política de devoluciones, por favor contáctanos:",
+      contactEmail: "Por correo electrónico: devoluciones@yzfarmasis.com",
+      contactPhone: "Por teléfono: +52 55 1234 5678",
+      contactAddress: "Por correo postal: Av. Insurgentes Sur 1234, Col. Del Valle, Ciudad de México, CP 03100, México",
+    },
+    footer: {
+      aboutUsTitle: "YZEssence", // Actualizado
+      aboutUsDesc: "Tu destino para productos de belleza de alta calidad. Nos dedicamos a realzar tu belleza natural con productos innovadores y efectivos.",
+      quickLinks: "Enlaces Rápidos",
+      home: "Inicio",
+      products: "Productos",
+      contact: "Contacto",
+      privacyPolicy: "Política de Privacidad",
+      returnPolicy: "Política de Devoluciones",
+      contactUsTitle: "Contáctanos",
+      email: "info@yzfarmasis.com",
+      phone: "+52 55 1234 5678",
+      address: "Av. Insurgentes Sur 1234, CDMX, México",
+      followUs: "Síguenos",
+      copyright: "Todos los derechos reservados.",
+    },
+    promotionModal: {
+      welcomeTitle: "¡Bienvenido a YZEssence!", // Actualizado
+      welcomeSubtitle: "Disfruta de un 10% de descuento en tu primera compra. ¡No te lo pierdas!",
+      yourDiscountCode: "Tu código de descuento:",
+      copy: "Copiar",
+      copied: "¡Copiado!",
+      applyDiscount: "Aplicar Descuento",
+    },
+    expressDeliveryAd: {
+      title: "¡Envío Express!",
+      subtitle: "Paga al Recibir",
+      whatsappMessageStart: "¡Hola! Me gustaría hacer un pedido con envío express y pago contra entrega. Aquí está mi carrito:",
+      whatsappMessageEmptyCart: "\n(Mi carrito está vacío, pero me gustaría consultar sobre sus productos).",
+      whatsappMessageItems: "\n",
+      whatsappMessageTotal: "Total",
+      whatsappMessageEnd: "\n¡Espero su confirmación!",
+      titleProfessional: "¡Ordena Ahora con Pago Contra Entrega!",
+      subtitleProfessional: "Envío Express a tu Puerta",
+    },
+    globalAd: {
+      text: "¡Ofertas Exclusivas! Haz clic para descubrir más.",
+      message: "¡Bienvenido! Descubre nuestras increíbles ofertas y promociones especiales. ¡No te las pierdas!",
+    },
+    welcomeAd: {
+      title: "¡Bienvenido a YZEssence!", // Actualizado
+      subtitle: "Descubre la belleza que te espera.",
+      message: "¡Gracias por visitarnos! Esperamos que disfrutes explorando nuestros productos de belleza.",
+    },
+    hotSalesPage: {
+      title: "¡Ofertas Calientes!",
+      subtitle: "Aprovecha nuestros descuentos exclusivos por tiempo limitado.",
+      noSalesFound: "No hay ofertas disponibles en este momento. ¡Vuelve pronto!",
+    },
+  },
+};
+
+const LanguageContext = createContext();
+
+export const LanguageProvider = ({ children }) => {
+  const [language, setLanguage] = useState('es'); // Idioma por defecto
+  const [t, setT] = useState(translations.es); // Traducciones actuales
+
+  useEffect(() => {
+    // Cargar el idioma guardado en localStorage si existe
+    const savedLang = localStorage.getItem('appLanguage');
+    if (savedLang && translations[savedLang]) {
+      setLanguage(savedLang);
+      setT(translations[savedLang]);
+    }
+  }, []);
+
+  return (
+    <LanguageContext.Provider value={{ language: 'es', t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
+
+export const useLanguage = () => {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error('useLanguage debe ser usado dentro de un LanguageProvider');
+  }
+  return context;
+};
